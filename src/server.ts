@@ -11,6 +11,7 @@ import type { CorsOptions } from "cors";
 /** Custom modules */
 import config from "@/config";
 import limiter from "@/lib/express_rate_limit";
+import v1Routers from "@/routes/v1";
 
 /** Initial express app */
 const app = express();
@@ -21,6 +22,7 @@ const corsOptions: CorsOptions = {
     if (config.NODE_ENV === "development" || !origin) {
       callback(null, true);
     } else {
+      /** Rejected requests */
       callback(new Error(`CORS error: ${origin} is not allowed by CORS`), false);
     }
   },
@@ -39,12 +41,32 @@ app.use(
 app.use(helmet()); /* enhance security by setting various HTTP headers */
 app.use(limiter); /* Rate limit middleware to prevent excessive requests and enhance security */
 
-/** Initial routes */
-app.get("/", (req, res) => {
-  res.json({
-    message: "Hello from backend",
-  });
-});
+(async () => {
+  try {
+    /** Initial routes */
+    app.use("/api/v1", v1Routers);
 
-/** Run the server */
-app.listen(config.PORT, () => console.log(`Server running on http://localhost:${config.PORT}`));
+    /** Run the server */
+    app.listen(config.PORT, () => {
+      console.log(`Server running on http://localhost:${config.PORT}`);
+    });
+  } catch (err) {
+    console.log(`Failed to load server`, err);
+
+    if (config.NODE_ENV === "production") {
+      process.exit(1);
+    }
+  }
+})();
+
+const handleServerShutDown = async () => {
+  try {
+    console.log("Server ShutDown");
+    process.exit(0);
+  } catch (err) {
+    console.log("Error during server shutdown", err);
+  }
+};
+
+process.on("SIGTERM", handleServerShutDown);
+process.on("SIGINT", handleServerShutDown);
