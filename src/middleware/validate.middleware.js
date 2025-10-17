@@ -1,4 +1,4 @@
-const { core } = require('../utils');
+const { validateFields } = require('../utils/core.utils');
 
 const fieldValid = (schema) => (req, res, next) => {
   const { error, value } = schema.validate(req.body, {
@@ -9,7 +9,7 @@ const fieldValid = (schema) => (req, res, next) => {
       field: detail.path[0],
       message: detail.message,
     }));
-    return core.validateFields(res, messages);
+    return validateFields(res, messages);
   }
   req.validatedBody = value;
   next();

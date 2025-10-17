@@ -57,7 +57,6 @@ const userSignin = async (req, res) => {
       status: StatusCodes.OK,
       accessToken,
       role: user.role,
-      location: user.labLocation,
       isApproved: user.isApproved,
       message: 'You are successfully logged-in.',
     });
@@ -94,7 +93,6 @@ const userSignup = async (req, res) => {
       phone: value.phone,
       role: roles.includes(value.role) ? value.role : userRole.ADMIN,
       profileImage: profileImagePath,
-      labLocation: value.labLocation,
       isApproved: value.isApproved || false,
     });
 
@@ -123,7 +121,6 @@ const userSignup = async (req, res) => {
       status: StatusCodes.OK,
       accessToken,
       role: user.role,
-      location: user.labLocation,
       isApproved: user.isApproved,
       message: 'New user created successfully and logged in.',
     });

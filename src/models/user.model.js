@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 const env = require('../config/env.config');
 const { userRole } = require('../constant');
 
@@ -52,11 +51,6 @@ const UserSchema = new mongoose.Schema(
     profileImage: {
       type: String,
       default: '',
-    },
-    labLocation: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Locations',
-      required: true,
     },
     isApproved: {
       type: Boolean,

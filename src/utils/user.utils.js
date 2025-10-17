@@ -10,6 +10,4 @@ const getUserOrRespondNotFound = async (id, res) => {
   return user;
 };
 
-module.exports = {
-  getUserOrRespondNotFound,
-};
+module.exports = getUserOrRespondNotFound;
