@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { env } = require('../config/env.config');
+const { env } = require('../config');
 const { role } = require('../constant');
 
 const saltNum = 10;
