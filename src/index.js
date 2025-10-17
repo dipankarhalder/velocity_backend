@@ -3,9 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
-const { env, db } = require('./config');
-const { core } = require('./utils');
-const { rootApiRouter } = require('./routes');
+
+const dbConnect = require('./config/db.config');
+const env = require('./config/env.config');
+const router = require('./routes');
+const { globalError, missingRoutes } = require('./utils/core.utils');
 
 const app = express();
 const corsOptions = {
@@ -19,12 +21,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/api', rootApiRouter);
-app.use((req, res, next) => core.missingRoutes(req, res, next));
-app.use((error, req, res) => core.globalError(res, error));
 
-db.dbConnect()
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api', router);
+app.use((req, res, next) => missingRoutes(req, res, next));
+app.use((error, req, res) => globalError(res, error));
+
+dbConnect()
   .then(() => {
     app.listen(env.PORT, () => {
       console.log(`Server successfully started on port: ${env.PORT}`);

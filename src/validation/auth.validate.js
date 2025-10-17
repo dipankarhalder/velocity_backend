@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { role } = require('../constant');
+const { userRole } = require('../constant');
 const { valid } = require('../utils');
 
 const userLoginSchema = Joi.object({
@@ -14,7 +14,7 @@ const userInfoSchema = Joi.object({
   password: valid.password,
   phone: valid.phone,
   labLocation: valid.requiredString('Lab Location should not be blank.'),
-  role: Joi.string().valid(role.userRole.SUPER, role.userRole.ADMIN, role.userRole.STAFF).required().messages({
+  role: Joi.string().valid(userRole.SUPER, userRole.ADMIN, userRole.STAFF).required().messages({
     'any.only': 'Role should be select a option.',
   }),
 });

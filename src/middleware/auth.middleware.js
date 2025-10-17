@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const jwt = require('jsonwebtoken');
-const { env } = require('../config');
+const env = require('../config/env.config');
 
 const verifyToken = (req, res, next) => {
   try {
