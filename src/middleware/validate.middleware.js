@@ -1,6 +1,6 @@
 const { core } = require('../utils');
 
-const validateItems = (schema) => (req, res, next) => {
+const fieldValid = (schema) => (req, res, next) => {
   const { error, value } = schema.validate(req.body, {
     abortEarly: false,
   });
@@ -15,4 +15,4 @@ const validateItems = (schema) => (req, res, next) => {
   next();
 };
 
-module.exports = validateItems;
+module.exports = fieldValid;
