@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { StatusCodes } = require('http-status-codes');
 
-/** Validates a MongoDB ObjectId. */
 const isValidObjectId = (id, res, label = 'ID') => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     res.status(StatusCodes.BAD_REQUEST).json({

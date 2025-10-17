@@ -1,4 +1,4 @@
-const User = require('../models/admin/user.model');
+const User = require('../models/user.model');
 const { notFoundItem } = require('./core.utils');
 
 const getUserOrRespondNotFound = async (id, res) => {
