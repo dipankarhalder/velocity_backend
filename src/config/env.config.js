@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-module.exports = {
+const env = {
   PORT: process.env.PORT,
   MONGOURI: process.env.MONGOURI,
   PLATFORM: process.env.PLATFORM,
@@ -11,3 +11,5 @@ module.exports = {
   REFRESHTOKENEXPIRY: process.env.REFRESHTOKENEXPIRY,
   NODEENV: process.env.NODEENV,
 };
+
+module.exports = env;

@@ -2,12 +2,12 @@ const path = require('path');
 const { StatusCodes } = require('http-status-codes');
 const UAParser = require('ua-parser-js');
 const User = require('../models/user.model');
-const { env } = require('../config');
-const { core } = require('../utils');
-const { role } = require('../constant');
+const env = require('../config/env.config');
+const { userRole } = require('../constant');
+const { validateFields, sendErrorResponse, deleteUploadedFile } = require('../utils/core.utils');
 
 /** roles define */
-const roles = [role.userRole.SUPER, role.userRole.ADMIN, role.userRole.STAFF];
+const roles = [userRole.SUPER, userRole.ADMIN, userRole.STAFF];
 
 /*
  * endpoint: /auth/signin
@@ -23,12 +23,12 @@ const userSignin = async (req, res) => {
       email: value.email,
     }).select('+password');
     if (!user) {
-      return core.validateFields(res, 'Provided email address is not exist!');
+      return validateFields(res, 'Provided email address is not exist!');
     }
 
     const isMatch = await user.comparePassword(value.password);
     if (!isMatch) {
-      return core.validateFields(res, 'Entered password is invalid, please try again.');
+      return validateFields(res, 'Entered password is invalid, please try again.');
     }
 
     const { accessToken, refreshToken } = user.generateTokens();
@@ -62,7 +62,7 @@ const userSignin = async (req, res) => {
       message: 'You are successfully logged-in.',
     });
   } catch (error) {
-    return core.sendErrorResponse(res, error);
+    return sendErrorResponse(res, error);
   }
 };
 
@@ -80,9 +80,9 @@ const userSignup = async (req, res) => {
       $or: [{ email: value.email }, { phone: value.phone }],
     });
     if (existingUser) {
-      core.deleteUploadedFile(req.file);
+      deleteUploadedFile(req.file);
       const conflictField = existingUser.email === value.email ? 'email' : 'phone';
-      return core.validateFields(res, `Provided ${conflictField} is already associated with another user.`);
+      return validateFields(res, `Provided ${conflictField} is already associated with another user.`);
     }
 
     const profileImagePath = req.file ? path.join('uploads', req.file.filename) : '';
@@ -92,7 +92,7 @@ const userSignup = async (req, res) => {
       email: value.email,
       password: value.password,
       phone: value.phone,
-      role: roles.includes(value.role) ? value.role : role.userRole.ADMIN,
+      role: roles.includes(value.role) ? value.role : userRole.ADMIN,
       profileImage: profileImagePath,
       labLocation: value.labLocation,
       isApproved: value.isApproved || false,
@@ -128,7 +128,7 @@ const userSignup = async (req, res) => {
       message: 'New user created successfully and logged in.',
     });
   } catch (error) {
-    return core.sendErrorResponse(res, error);
+    return sendErrorResponse(res, error);
   }
 };
 
@@ -201,7 +201,7 @@ const refreshToken = async (req, res) => {
       message: 'Token refreshed successfully.',
     });
   } catch (error) {
-    return core.sendErrorResponse(res, error);
+    return sendErrorResponse(res, error);
   }
 };
 
@@ -238,7 +238,7 @@ const userSignout = async (req, res) => {
       message: 'You are Logged-out successfully.',
     });
   } catch (error) {
-    return core.sendErrorResponse(res, error);
+    return sendErrorResponse(res, error);
   }
 };
 

@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { env } = require('../config');
-const { role } = require('../constant');
+
+const env = require('../config/env.config');
+const { userRole } = require('../constant');
 
 const saltNum = 10;
-const roles = [role.userRole.SUPER, role.userRole.ADMIN, role.userRole.STAFF];
+const roles = [userRole.SUPER, userRole.ADMIN, userRole.STAFF];
 
 const RefreshTokenSchema = new mongoose.Schema({
   token: { type: String, required: true },
@@ -46,7 +47,7 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: roles,
-      default: role.userRole.ADMIN,
+      default: userRole.ADMIN,
     },
     profileImage: {
       type: String,
