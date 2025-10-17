@@ -12,4 +12,4 @@ const isValidObjectId = (id, res, label = 'ID') => {
   return true;
 };
 
-module.exports = { isValidObjectId };
+module.exports = isValidObjectId;
