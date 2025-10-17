@@ -40,7 +40,7 @@ const userSignin = async (req, res) => {
       browser: ua.browser.name,
       os: ua.os.name,
     };
-    if (user.refreshTokens.length >= 5) {
+    if (user.refreshTokens.length >= 10) {
       user.refreshTokens.shift();
     }
     user.refreshTokens.push(deviceInfo);
@@ -99,7 +99,7 @@ const userSignup = async (req, res) => {
     const { accessToken, refreshToken } = user.generateTokens();
     const parser = new UAParser();
     const ua = parser.setUA(req.headers['user-agent']).getResult();
-    if (user.refreshTokens.length >= 5) {
+    if (user.refreshTokens.length >= 10) {
       user.refreshTokens.shift();
     }
     user.refreshTokens.push({
@@ -174,7 +174,7 @@ const refreshToken = async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken } = user.generateTokens();
     const parser = new UAParser();
     const ua = parser.setUA(req.headers['user-agent']).getResult();
-    if (user.refreshTokens.length >= 5) {
+    if (user.refreshTokens.length >= 10) {
       user.refreshTokens.shift();
     }
     user.refreshTokens.push({
