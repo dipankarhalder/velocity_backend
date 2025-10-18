@@ -1,19 +1,16 @@
 const path = require('path');
 const { StatusCodes } = require('http-status-codes');
 const User = require('../models/user.model');
-const isValidObjectId = require('../utils/mongo.utils');
 const getUserOrRespondNotFound = require('../utils/user.utils');
 const { sendErrorResponse, validateFields, deleteUploadedFile, notFoundItem } = require('../utils/core.utils');
 
 /*
- * endpoint: /:id/profile/me
+ * endpoint: /profile/me
  * method: POST
  */
 const userProfile = async (req, res) => {
   try {
-    const userId = req.params.id;
-    if (!isValidObjectId(userId, res, 'profile ID')) return;
-
+    const userId = req.user.id;
     const user = await getUserOrRespondNotFound(userId, res);
     if (!user) return;
 
@@ -29,14 +26,32 @@ const userProfile = async (req, res) => {
 };
 
 /*
- * endpoint: /:id/profile/update-image
+ * endpoint: /profile/list
+ * method: GET
+ */
+const userProfiles = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await getUserOrRespondNotFound(userId, res);
+    if (!user) return;
+
+    const users = await User.find().select('-password -refreshTokens');
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.OK,
+      data: users,
+    });
+  } catch (error) {
+    return sendErrorResponse(res, error);
+  }
+};
+
+/*
+ * endpoint: /profile/update-image
  * method: PATCH
  */
 const userImageUpdate = async (req, res) => {
   try {
-    const userId = req.params.id;
-    if (!isValidObjectId(userId, res, 'profile ID')) return;
-
+    const userId = req.user.id;
     if (!req.file) {
       return validateFields(res, 'No image file uploaded.');
     }
@@ -68,15 +83,13 @@ const userImageUpdate = async (req, res) => {
 };
 
 /*
- * endpoint: /:id/profile/update-status
+ * endpoint: /profile/update-status
  * method: PATCH
  */
 const userUpdateStatus = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user.id;
     const { isApproved } = req.body;
-
-    if (!isValidObjectId(userId, res, 'profile ID')) return;
     if (typeof isApproved !== 'boolean') {
       return res.status(StatusCodes.BAD_REQUEST).json({
         status: StatusCodes.BAD_REQUEST,
@@ -99,8 +112,40 @@ const userUpdateStatus = async (req, res) => {
   }
 };
 
+/*
+ * endpoint: /profile/update-password
+ * method: PATCH
+ */
+const userUpdatePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const value = req.validatedBody;
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      return validateFields(res, 'The user is not found.');
+    }
+
+    const isMatch = await user.comparePassword(value.oldPassword);
+    if (!isMatch) {
+      return validateFields(res, 'Entered password is invalid, please try again.');
+    }
+
+    user.password = value.newPassword;
+    user.refreshTokens = [];
+    await user.save();
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.OK,
+      message: 'Password successfully updated. Please log in again.',
+    });
+  } catch (error) {
+    return sendErrorResponse(res, error);
+  }
+};
+
 module.exports = {
   userProfile,
+  userProfiles,
   userImageUpdate,
   userUpdateStatus,
+  userUpdatePassword,
 };
