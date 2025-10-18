@@ -95,7 +95,7 @@ UserSchema.methods.generateTokens = function () {
     isApproved: this.isApproved,
   };
   const accessToken = jwt.sign(payload, env.JWTSECRET, {
-    expiresIn: env.ACCESSTOKENEXPIRY || '15m',
+    expiresIn: env.ACCESSTOKENEXPIRY || '4h',
   });
   const refreshToken = jwt.sign(payload, env.JWTRSECRET, {
     expiresIn: env.REFRESHTOKENEXPIRY || '7d',

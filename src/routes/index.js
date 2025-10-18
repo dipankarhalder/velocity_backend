@@ -5,7 +5,7 @@ const { userRole } = require('../constant');
 const { userLoginSchema, userInfoSchema } = require('../validation/auth.validate');
 
 const { userSignup, userSignin, userSignout, refreshToken } = require('../controllers/auth.controller');
-const { userProfile, userImageUpdate } = require('../controllers/profile.controller');
+const { userProfile, userImageUpdate, userUpdateStatus } = require('../controllers/profile.controller');
 
 const verifyToken = require('../middleware/auth.middleware');
 const authRole = require('../middleware/role.middleware');
@@ -20,13 +20,8 @@ router.post('/auth/signout', userSignout);
 router.post('/auth/refresh-token', refreshToken);
 
 /* Profile */
-router.get('/profile/me', verifyToken, userProfile);
-router.patch(
-  '/profile/update-profile-image',
-  verifyToken,
-  authRole([SUPER, ADMIN, STAFF]),
-  uploadMedia.single('profileImage'),
-  userImageUpdate,
-);
+router.get('/:id/profile/me', verifyToken, userProfile);
+router.patch('/:id/profile/update-image', verifyToken, authRole([SUPER, ADMIN, STAFF]), uploadMedia.single('profileImage'), userImageUpdate);
+router.patch('/:id/profile/update-status', verifyToken, authRole([SUPER, ADMIN]), userUpdateStatus);
 
 module.exports = router;

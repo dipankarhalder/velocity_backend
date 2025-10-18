@@ -12,9 +12,6 @@ const roles = [userRole.SUPER, userRole.ADMIN, userRole.STAFF];
 /*
  * endpoint: /auth/signin
  * method: POST
- * access: public access
- * desc: login internal people
- * payload: email, password
  */
 const userSignin = async (req, res) => {
   try {
@@ -68,9 +65,6 @@ const userSignin = async (req, res) => {
 /*
  * endpoint: /auth/signup
  * method: POST
- * access: public access
- * desc: register / create a new internal people
- * payload: firstName, lastName, email, phone, password, role, labLocation
  */
 const userSignup = async (req, res) => {
   try {
@@ -132,8 +126,6 @@ const userSignup = async (req, res) => {
 /*
  * endpoint: /auth/refresh-token
  * method: POST
- * access: private access
- * desc: check the prev refresh token and if expired generate the new token
  */
 const refreshToken = async (req, res) => {
   try {
@@ -205,8 +197,6 @@ const refreshToken = async (req, res) => {
 /*
  * endpoint: /auth/signout
  * method: POST
- * access: public access
- * desc: logged out the current user
  */
 const userSignout = async (req, res) => {
   try {
